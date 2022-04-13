@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
@@ -10,15 +10,27 @@ class Jogo:
         self.console = console
 
 
-@app.route('/inicio')
-def inicio():
-    lista = [
+lista = [
         Jogo('Super Mario', 'Plataforma', 'SNES'),
         Jogo('Pokemon Gold', 'RPG', 'GameBoy'),
         Jogo('Mortal Kombat', 'Luta', 'SNES'),
     ]
 
+
+@app.route('/')
+def index():
     return render_template('lista.html', titulo="Jogos", header="Jogoteca", jogos=lista)
 
 
-app.run(host='0.0.0.0', port=8080)
+@app.route('/novo')
+def novo():
+    return render_template('novo.html', titulo="Jogos", header="Novo Jovo")
+
+
+@app.route('/criar', methods=['POST', ])
+def criar():
+    lista.append(Jogo(request.form['nome'], request.form['categoria'], request.form['console']))
+    return redirect('/')
+
+
+app.run(host='0.0.0.0', port=8080, debug=True)
